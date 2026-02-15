@@ -1,0 +1,18 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - starlingAccessToken
+    properties:
+      starlingAccessToken:
+        type: string
+        description: Your Starling Bank personal access token
+  commandFunction: |
+    (config) => ({
+      command: 'npx',
+      args: ['-y', 'starling-mcp'],
+      env: {
+        STARLING_ACCESS_TOKEN: config.starlingAccessToken
+      }
+    })
