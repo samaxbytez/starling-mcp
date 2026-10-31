@@ -3,6 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StarlingClient } from "./client.js";
+import { loadConfig, type Config } from "./config.js";
 import { registerAccountTools } from "./tools/accounts.js";
 import { registerAccountHolderTools } from "./tools/account-holder.js";
 import { registerFeedTools } from "./tools/feed.js";
@@ -14,20 +15,21 @@ import { registerDirectDebitTools } from "./tools/direct-debits.js";
 import { registerCardTools } from "./tools/cards.js";
 import { registerSpendingInsightTools } from "./tools/spending-insights.js";
 
-const STARLING_ACCESS_TOKEN = process.env.STARLING_ACCESS_TOKEN;
+declare const PACKAGE_VERSION: string;
 
-if (!STARLING_ACCESS_TOKEN) {
-  console.error(
-    "Missing required environment variable: STARLING_ACCESS_TOKEN"
-  );
+let config: Config;
+try {
+  config = loadConfig(process.env);
+} catch (error) {
+  console.error((error as Error).message);
   process.exit(1);
 }
 
-const client = new StarlingClient(STARLING_ACCESS_TOKEN);
+const client = new StarlingClient(config.accessToken, config.baseUrl);
 
 const server = new McpServer({
   name: "starling-mcp",
-  version: "1.0.0",
+  version: PACKAGE_VERSION,
 });
 
 registerAccountTools(server, client);
@@ -44,7 +46,9 @@ registerSpendingInsightTools(server, client);
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Starling MCP Server running on stdio");
+  console.error(
+    `Starling MCP Server running on stdio (${config.sandbox ? "sandbox" : "live"})`
+  );
 }
 
 main().catch((error) => {

@@ -25,6 +25,7 @@ function mockError(status: number, body: unknown): Response {
   return {
     ok: false,
     status,
+    headers: new Headers(status === 429 ? { "retry-after": "7" } : {}),
     text: async () =>
       typeof body === "string" ? body : JSON.stringify(body),
   } as Response;
@@ -194,6 +195,46 @@ describe("StarlingClient - error handling", () => {
     } catch (e) {
       const err = e as StarlingApiError;
       expect(err.status).toBe(429);
+      expect(err.message).toContain("retry after 7 seconds");
     }
+  });
+});
+
+describe("StarlingClient - path safety", () => {
+  const hostile = [
+    "/api/v2/../../evil",
+    "/api/v2/%2e%2e/%2e%2e/evil",
+    "/api/v2/%2E%2E/x",
+    "/api/v2/..%2fx",
+    "/api/v2/a%5cb",
+    "https://evil.example/api/v2/x",
+    "//evil.example/api/v2/x",
+    "javascript:alert(1)",
+    "/other/path",
+  ];
+
+  for (const path of hostile) {
+    it(`rejects ${path}`, async () => {
+      const client = new StarlingClient("token");
+      await expect(client.get(path)).rejects.toThrow();
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+  }
+
+  it("refuses redirects and sets a timeout", async () => {
+    mockFetch.mockResolvedValueOnce(mockOk({}));
+    await new StarlingClient("token").get("/api/v2/accounts");
+    const opts = mockFetch.mock.calls[0][1] as RequestInit;
+    expect(opts.redirect).toBe("error");
+    expect(opts.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it("keeps every validation message", async () => {
+    mockFetch.mockResolvedValueOnce(
+      mockError(400, { errors: [{ message: "bad a" }, { message: "bad b" }] })
+    );
+    await expect(
+      new StarlingClient("token").get("/api/v2/x")
+    ).rejects.toThrow(/bad a; bad b/);
   });
 });

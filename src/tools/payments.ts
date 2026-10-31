@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid, currency } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import { jsonResponse, errorResponse, logToolCall } from "../utils.js";
 
@@ -14,15 +15,11 @@ export function registerPaymentTools(
       description:
         "Make a domestic (UK) payment from an account to a payee. Requires the payee UID and payee account UID.",
       inputSchema: {
-        account_uid: z.string().describe("The source account UID"),
-        category_uid: z
-          .string()
-          .describe("The category UID for the payment"),
-        payee_uid: z.string().describe("The destination payee UID"),
-        payee_account_uid: z
-          .string()
-          .describe("The destination payee account UID"),
-        currency: z.string().describe("Currency code (e.g., GBP)"),
+        account_uid: uid.describe("The source account UID"),
+        category_uid: uid.describe("The category UID for the payment"),
+        payee_uid: uid.describe("The destination payee UID"),
+        payee_account_uid: uid.describe("The destination payee account UID"),
+        currency: currency.describe("Currency code (e.g., GBP)"),
         amount_minor_units: z
           .number()
           .int()
@@ -71,7 +68,7 @@ export function registerPaymentTools(
       description:
         "Get details of a payment order by its UID. Returns payment status, amount, and counterparty.",
       inputSchema: {
-        payment_order_uid: z.string().describe("The payment order UID"),
+        payment_order_uid: uid.describe("The payment order UID"),
       },
     },
     async ({ payment_order_uid }) => {
@@ -94,7 +91,7 @@ export function registerPaymentTools(
       description:
         "Get the individual payments associated with a payment order.",
       inputSchema: {
-        payment_order_uid: z.string().describe("The payment order UID"),
+        payment_order_uid: uid.describe("The payment order UID"),
       },
     },
     async ({ payment_order_uid }) => {

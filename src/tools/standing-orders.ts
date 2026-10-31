@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid, currency, isoDate } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import {
   jsonResponse,
@@ -19,8 +20,8 @@ export function registerStandingOrderTools(
       description:
         "List all standing orders for an account and category. Returns payment details, frequency, and next payment dates.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
       },
     },
     async ({ account_uid, category_uid }) => {
@@ -45,9 +46,9 @@ export function registerStandingOrderTools(
       title: "Get Standing Order",
       description: "Get details of a specific standing order.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        payment_order_uid: z.string().describe("The standing order payment order UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        payment_order_uid: uid.describe("The standing order payment order UID"),
       },
     },
     async ({ account_uid, category_uid, payment_order_uid }) => {
@@ -74,13 +75,11 @@ export function registerStandingOrderTools(
       description:
         "Create a new standing order. Specify the payee, amount, reference, frequency, and start date.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        payee_uid: z.string().describe("The destination payee UID"),
-        payee_account_uid: z
-          .string()
-          .describe("The destination payee account UID"),
-        currency: z.string().describe("Currency code (e.g., GBP)"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        payee_uid: uid.describe("The destination payee UID"),
+        payee_account_uid: uid.describe("The destination payee account UID"),
+        currency: currency.describe("Currency code (e.g., GBP)"),
         amount_minor_units: z
           .number()
           .int()
@@ -90,9 +89,7 @@ export function registerStandingOrderTools(
         frequency: z
           .enum(["DAILY", "WEEKLY", "EVERY_TWO_WEEKS", "MONTHLY", "EVERY_FOUR_WEEKS", "QUARTERLY", "YEARLY"])
           .describe("Payment frequency"),
-        start_date: z
-          .string()
-          .describe("Start date in YYYY-MM-DD format"),
+        start_date: isoDate.describe("Start date in YYYY-MM-DD format"),
       },
     },
     async ({
@@ -139,9 +136,9 @@ export function registerStandingOrderTools(
       title: "Cancel Standing Order",
       description: "Cancel an existing standing order.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        payment_order_uid: z.string().describe("The standing order payment order UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        payment_order_uid: uid.describe("The standing order payment order UID"),
       },
     },
     async ({ account_uid, category_uid, payment_order_uid }) => {
@@ -168,9 +165,9 @@ export function registerStandingOrderTools(
       description:
         "Get the next upcoming payment dates for a standing order.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        payment_order_uid: z.string().describe("The standing order payment order UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        payment_order_uid: uid.describe("The standing order payment order UID"),
         count: z
           .number()
           .int()

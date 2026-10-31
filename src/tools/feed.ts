@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid, isoTimestamp } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import {
   jsonResponse,
@@ -19,14 +20,11 @@ export function registerFeedTools(
       description:
         "Get transaction feed items for an account and category. Optionally filter by changes since a given timestamp. Returns transactions with amounts, directions, status, counterparty info.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z
-          .string()
-          .describe(
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe(
             "The category UID (use the defaultCategory from list accounts)"
           ),
-        changes_since: z
-          .string()
+        changes_since: isoTimestamp
           .optional()
           .describe(
             "ISO 8601 timestamp to filter items changed after this time (e.g., 2024-01-01T00:00:00.000Z)"
@@ -61,9 +59,9 @@ export function registerFeedTools(
       description:
         "Get a single transaction feed item by its UID. Returns full details including amount, direction, status, counterparty, category, and notes.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        feed_item_uid: z.string().describe("The feed item UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        feed_item_uid: uid.describe("The feed item UID"),
       },
     },
     async ({ account_uid, category_uid, feed_item_uid }) => {
@@ -90,15 +88,13 @@ export function registerFeedTools(
       description:
         "Get transaction feed items between two timestamps. Useful for querying transactions in a specific date range.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        min_transaction_timestamp: z
-          .string()
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        min_transaction_timestamp: isoTimestamp
           .describe(
             "Start of range, ISO 8601 timestamp (e.g., 2024-01-01T00:00:00.000Z)"
           ),
-        max_transaction_timestamp: z
-          .string()
+        max_transaction_timestamp: isoTimestamp
           .describe(
             "End of range, ISO 8601 timestamp (e.g., 2024-01-31T23:59:59.999Z)"
           ),
@@ -138,9 +134,9 @@ export function registerFeedTools(
       description:
         "Update the user note on a transaction feed item. Requires the feed item UID.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        feed_item_uid: z.string().describe("The feed item UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        feed_item_uid: uid.describe("The feed item UID"),
         note: z.string().describe("The note text to set on the feed item"),
       },
     },
@@ -169,9 +165,9 @@ export function registerFeedTools(
       description:
         "Change the spending category of a transaction feed item. Valid categories include: BILLS_AND_SERVICES, CHARITY, EATING_OUT, ENTERTAINMENT, EXPENSES, FAMILY, GENERAL, GIFTS, GROCERIES, HOME, INCOME, SAVING, SHOPPING, HOLIDAYS, PAYMENTS, PETS, TRANSPORT, LIFESTYLE, NONE, REVENUE, OTHER_INCOME, CLIENT_REFUNDS, INVENTORY, STAFF, TRAVEL, WORKPLACE, REPAIRS_AND_MAINTENANCE, ADMIN, MARKETING, BUSINESS_ENTERTAINMENT, INTEREST_PAYMENTS, BANK_CHARGES, OTHER, FOOD_AND_DRINK, EQUIPMENT, PROFESSIONAL_SERVICES, PHONE_AND_INTERNET, VEHICLES, DIRECTORS_WAGES, VAT, CORPORATION_TAX, SELF_ASSESSMENT_TAX, INVESTMENT_CAPITAL, TRANSFERS, LOAN_PRINCIPAL, PERSONAL, DIVIDENDS.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        feed_item_uid: z.string().describe("The feed item UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        feed_item_uid: uid.describe("The feed item UID"),
         spending_category: z
           .string()
           .describe("The spending category to assign (e.g., GROCERIES, TRANSPORT)"),
@@ -207,9 +203,9 @@ export function registerFeedTools(
       title: "List Feed Item Attachments",
       description: "List attachments on a transaction feed item.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        category_uid: z.string().describe("The category UID"),
-        feed_item_uid: z.string().describe("The feed item UID"),
+        account_uid: uid.describe("The account UID"),
+        category_uid: uid.describe("The category UID"),
+        feed_item_uid: uid.describe("The feed item UID"),
       },
     },
     async ({ account_uid, category_uid, feed_item_uid }) => {
