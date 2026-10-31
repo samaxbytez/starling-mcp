@@ -59,6 +59,8 @@ await client.connect(
     env: {
       PATH: process.env.PATH ?? "",
       STARLING_ACCESS_TOKEN: TOKEN,
+      // Attack the gated tools too.
+      STARLING_ENABLE_SENSITIVE_TOOLS: "true",
       STARLING_API_BASE_URL: `http://127.0.0.1:${api.address().port}`,
     },
     stderr: "ignore",
