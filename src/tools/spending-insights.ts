@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { uid, year, month } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import {
   jsonResponse,
@@ -19,11 +19,9 @@ export function registerSpendingInsightTools(
       description:
         "Get spending insights grouped by counter-party for a given month. Shows how much was spent with each merchant/payee.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        year: z.string().describe("Year (e.g., 2024)"),
-        month: z
-          .string()
-          .describe("Month as two-digit string (e.g., 01 for January)"),
+        account_uid: uid.describe("The account UID"),
+        year: year.describe("Year (e.g., 2024)"),
+        month: month.describe("Month as two-digit string (e.g., 01 for January)"),
       },
     },
     async ({ account_uid, year, month }) => {
@@ -51,11 +49,9 @@ export function registerSpendingInsightTools(
       description:
         "Get spending insights grouped by spending category for a given month. Shows how much was spent in each category (groceries, transport, etc.).",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        year: z.string().describe("Year (e.g., 2024)"),
-        month: z
-          .string()
-          .describe("Month as two-digit string (e.g., 01 for January)"),
+        account_uid: uid.describe("The account UID"),
+        year: year.describe("Year (e.g., 2024)"),
+        month: month.describe("Month as two-digit string (e.g., 01 for January)"),
       },
     },
     async ({ account_uid, year, month }) => {
@@ -83,11 +79,9 @@ export function registerSpendingInsightTools(
       description:
         "Get spending insights grouped by country for a given month. Useful for seeing international spending.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        year: z.string().describe("Year (e.g., 2024)"),
-        month: z
-          .string()
-          .describe("Month as two-digit string (e.g., 01 for January)"),
+        account_uid: uid.describe("The account UID"),
+        year: year.describe("Year (e.g., 2024)"),
+        month: month.describe("Month as two-digit string (e.g., 01 for January)"),
       },
     },
     async ({ account_uid, year, month }) => {

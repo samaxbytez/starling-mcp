@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import {
   jsonResponse,
@@ -37,7 +38,7 @@ export function registerAccountTools(
       description:
         "Get account identifiers (sort code, account number, IBAN, BIC) for a specific account.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
+        account_uid: uid.describe("The account UID"),
       },
     },
     async ({ account_uid }) => {
@@ -60,7 +61,7 @@ export function registerAccountTools(
       description:
         "Get the balance for a specific account. Returns cleared balance, effective balance, pending transactions, and accepted overdraft.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
+        account_uid: uid.describe("The account UID"),
       },
     },
     async ({ account_uid }) => {
@@ -83,7 +84,7 @@ export function registerAccountTools(
       description:
         "Check whether the account holds enough funds for a given amount. Returns true/false.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
+        account_uid: uid.describe("The account UID"),
         target_amount_in_minor_units: z
           .number()
           .int()
@@ -117,7 +118,7 @@ export function registerAccountTools(
       description:
         "List the available statement periods for an account. Returns year-month periods that have statements.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
+        account_uid: uid.describe("The account UID"),
       },
     },
     async ({ account_uid }) => {

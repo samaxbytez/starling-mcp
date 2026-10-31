@@ -1,10 +1,6 @@
-export const TOKEN_BUFFER_MS = 60_000;
-export const MAX_PAGE_SIZE = 50;
-export const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
-
 export function jsonResponse(data: unknown) {
   return {
-    content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+    content: [{ type: "text" as const, text: JSON.stringify(data) }],
   };
 }
 
@@ -38,4 +34,12 @@ export function logToolCall(tool: string, params?: Record<string, unknown>) {
     }
   }
   console.error(JSON.stringify(sanitized));
+}
+
+export function definedOnly<T extends Record<string, unknown>>(
+  obj: T
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined)
+  ) as Partial<T>;
 }

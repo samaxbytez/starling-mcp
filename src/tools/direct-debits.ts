@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { uid } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import { jsonResponse, errorResponse, logToolCall } from "../utils.js";
 
@@ -32,7 +32,7 @@ export function registerDirectDebitTools(
       description:
         "Get details of a specific direct debit mandate by its UID.",
       inputSchema: {
-        mandate_uid: z.string().describe("The direct debit mandate UID"),
+        mandate_uid: uid.describe("The direct debit mandate UID"),
       },
     },
     async ({ mandate_uid }) => {
@@ -55,9 +55,7 @@ export function registerDirectDebitTools(
       description:
         "Cancel a direct debit mandate. This will stop future payments under this mandate.",
       inputSchema: {
-        mandate_uid: z
-          .string()
-          .describe("The direct debit mandate UID to cancel"),
+        mandate_uid: uid.describe("The direct debit mandate UID to cancel"),
       },
     },
     async ({ mandate_uid }) => {

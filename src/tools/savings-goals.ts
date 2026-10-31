@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid, currency } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import { jsonResponse, errorResponse, logToolCall } from "../utils.js";
 
@@ -14,7 +15,7 @@ export function registerSavingsGoalTools(
       description:
         "List all savings goals (spaces) for an account. Returns goal name, target amount, saved amount, and percentage saved.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
+        account_uid: uid.describe("The account UID"),
       },
     },
     async ({ account_uid }) => {
@@ -37,8 +38,8 @@ export function registerSavingsGoalTools(
       description:
         "Get details of a specific savings goal including name, target, total saved, and saved percentage.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        savings_goal_uid: z.string().describe("The savings goal UID"),
+        account_uid: uid.describe("The account UID"),
+        savings_goal_uid: uid.describe("The savings goal UID"),
       },
     },
     async ({ account_uid, savings_goal_uid }) => {
@@ -64,11 +65,9 @@ export function registerSavingsGoalTools(
       description:
         "Create a new savings goal (space). Specify a name, currency, and optional target amount.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
+        account_uid: uid.describe("The account UID"),
         name: z.string().describe("Name of the savings goal"),
-        currency: z
-          .string()
-          .describe("Currency code (e.g., GBP)"),
+        currency: currency.describe("Currency code (e.g., GBP)"),
         target_minor_units: z
           .number()
           .int()
@@ -80,10 +79,14 @@ export function registerSavingsGoalTools(
     async ({ account_uid, name, currency, target_minor_units }) => {
       logToolCall("starling_create_savings_goal", { account_uid, name });
       try {
-        const body: Record<string, unknown> = { name, currency };
-        if (target_minor_units !== undefined) {
-          body.target = { currency, minorUnits: target_minor_units };
-        }
+        const body = {
+          name,
+          currency,
+          target:
+            target_minor_units === undefined
+              ? undefined
+              : { currency, minorUnits: target_minor_units },
+        };
         const result = await client.putJson(
           `/api/v2/account/${account_uid}/savings-goals`,
           body
@@ -102,14 +105,12 @@ export function registerSavingsGoalTools(
       description:
         "Add money to a savings goal from the main account. Uses a client-generated transfer UID for idempotency.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        savings_goal_uid: z.string().describe("The savings goal UID"),
-        transfer_uid: z
-          .string()
-          .describe(
+        account_uid: uid.describe("The account UID"),
+        savings_goal_uid: uid.describe("The savings goal UID"),
+        transfer_uid: uid.describe(
             "A unique UUID for this transfer (client-generated, for idempotency)"
           ),
-        currency: z.string().describe("Currency code (e.g., GBP)"),
+        currency: currency.describe("Currency code (e.g., GBP)"),
         amount_minor_units: z
           .number()
           .int()
@@ -149,14 +150,12 @@ export function registerSavingsGoalTools(
       description:
         "Withdraw money from a savings goal back to the main account.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        savings_goal_uid: z.string().describe("The savings goal UID"),
-        transfer_uid: z
-          .string()
-          .describe(
+        account_uid: uid.describe("The account UID"),
+        savings_goal_uid: uid.describe("The savings goal UID"),
+        transfer_uid: uid.describe(
             "A unique UUID for this transfer (client-generated, for idempotency)"
           ),
-        currency: z.string().describe("Currency code (e.g., GBP)"),
+        currency: currency.describe("Currency code (e.g., GBP)"),
         amount_minor_units: z
           .number()
           .int()
@@ -196,8 +195,8 @@ export function registerSavingsGoalTools(
       description:
         "Delete a savings goal. Any money in the goal will be returned to the main account.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        savings_goal_uid: z.string().describe("The savings goal UID"),
+        account_uid: uid.describe("The account UID"),
+        savings_goal_uid: uid.describe("The savings goal UID"),
       },
     },
     async ({ account_uid, savings_goal_uid }) => {
@@ -223,8 +222,8 @@ export function registerSavingsGoalTools(
       description:
         "Get the recurring transfer rule set up for a savings goal.",
       inputSchema: {
-        account_uid: z.string().describe("The account UID"),
-        savings_goal_uid: z.string().describe("The savings goal UID"),
+        account_uid: uid.describe("The account UID"),
+        savings_goal_uid: uid.describe("The savings goal UID"),
       },
     },
     async ({ account_uid, savings_goal_uid }) => {

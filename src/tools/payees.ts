@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import { jsonResponse, errorResponse, logToolCall } from "../utils.js";
 
@@ -76,7 +77,7 @@ export function registerPayeeTools(
       title: "Delete Payee",
       description: "Delete a saved payee by their UID.",
       inputSchema: {
-        payee_uid: z.string().describe("The payee UID to delete"),
+        payee_uid: uid.describe("The payee UID to delete"),
       },
     },
     async ({ payee_uid }) => {
@@ -99,10 +100,8 @@ export function registerPayeeTools(
       description:
         "Delete a specific bank account from a payee (if they have multiple accounts).",
       inputSchema: {
-        payee_uid: z.string().describe("The payee UID"),
-        account_uid: z
-          .string()
-          .describe("The payee account UID to delete"),
+        payee_uid: uid.describe("The payee UID"),
+        account_uid: uid.describe("The payee account UID to delete"),
       },
     },
     async ({ payee_uid, account_uid }) => {

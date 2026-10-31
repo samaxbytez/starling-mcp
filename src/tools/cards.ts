@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { uid } from "../schemas.js";
 import { StarlingClient } from "../client.js";
 import { jsonResponse, errorResponse, logToolCall } from "../utils.js";
 
@@ -31,7 +32,7 @@ export function registerCardTools(
       title: "Enable/Disable Card",
       description: "Lock or unlock a card. Set enabled to false to lock the card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z.boolean().describe("True to enable (unlock), false to disable (lock)"),
       },
     },
@@ -55,7 +56,7 @@ export function registerCardTools(
       title: "Enable/Disable ATM Withdrawals",
       description: "Enable or disable ATM cash withdrawals for a card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z.boolean().describe("True to enable ATM, false to disable"),
       },
     },
@@ -79,7 +80,7 @@ export function registerCardTools(
       title: "Enable/Disable Online Payments",
       description: "Enable or disable online/e-commerce payments for a card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z
           .boolean()
           .describe("True to enable online payments, false to disable"),
@@ -105,7 +106,7 @@ export function registerCardTools(
       title: "Enable/Disable Mobile Wallet",
       description: "Enable or disable mobile wallet (Apple Pay, Google Pay) for a card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z
           .boolean()
           .describe("True to enable mobile wallet, false to disable"),
@@ -131,7 +132,7 @@ export function registerCardTools(
       title: "Enable/Disable Gambling Payments",
       description: "Enable or disable gambling transactions for a card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z
           .boolean()
           .describe("True to enable gambling payments, false to disable"),
@@ -158,7 +159,7 @@ export function registerCardTools(
       description:
         "Enable or disable card-present / point-of-sale payments for a card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z
           .boolean()
           .describe("True to enable POS payments, false to disable"),
@@ -185,7 +186,7 @@ export function registerCardTools(
       description:
         "Enable or disable magnetic stripe payments for a card.",
       inputSchema: {
-        card_uid: z.string().describe("The card UID"),
+        card_uid: uid.describe("The card UID"),
         enabled: z
           .boolean()
           .describe("True to enable mag stripe, false to disable"),
