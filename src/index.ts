@@ -3,6 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StarlingClient } from "./client.js";
+import { withToolPolicy } from "./policy.js";
 import { loadConfig, type Config } from "./config.js";
 import { registerAccountTools } from "./tools/accounts.js";
 import { registerAccountHolderTools } from "./tools/account-holder.js";
@@ -32,16 +33,20 @@ const server = new McpServer({
   version: PACKAGE_VERSION,
 });
 
-registerAccountTools(server, client);
-registerAccountHolderTools(server, client);
-registerFeedTools(server, client);
-registerSavingsGoalTools(server, client);
-registerPayeeTools(server, client);
-registerPaymentTools(server, client);
-registerStandingOrderTools(server, client);
-registerDirectDebitTools(server, client);
-registerCardTools(server, client);
-registerSpendingInsightTools(server, client);
+const tools = withToolPolicy(server, {
+  allowSensitive: process.env.STARLING_ENABLE_SENSITIVE_TOOLS === "true",
+});
+
+registerAccountTools(tools, client);
+registerAccountHolderTools(tools, client);
+registerFeedTools(tools, client);
+registerSavingsGoalTools(tools, client);
+registerPayeeTools(tools, client);
+registerPaymentTools(tools, client);
+registerStandingOrderTools(tools, client);
+registerDirectDebitTools(tools, client);
+registerCardTools(tools, client);
+registerSpendingInsightTools(tools, client);
 
 async function main() {
   const transport = new StdioServerTransport();
